@@ -10,7 +10,7 @@ use yii\web\MethodNotAllowedHttpException;
 
 class AuthController extends Controller
 {
-    public $defaultAction = 'login';
+    public $defaultAction = 'signup';
 
     /**
      * @throws MethodNotAllowedHttpException
