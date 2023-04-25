@@ -48,6 +48,7 @@ class AuthController extends Controller
     {
         $model = new User();
         if ($this->request->isPost) {
+            return $this->request->post();
             if ($model->load(Yii::$app->request->post(), '') && $model->validate()) {
                 return $model->saved();
             } else {
