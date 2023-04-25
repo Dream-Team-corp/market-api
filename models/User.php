@@ -182,8 +182,12 @@ class User extends ActiveRecord implements IdentityInterface
             'user_role' => function () {
                 return $this->user_role === self::ROLE_ADMIN ? "admin" : "worker";
             },
-            'created_at',
-            'updated_at'
+            'created_at' => function () {
+                return date('d-m-Y H:i:s', $this->created_at);
+            },
+            'updated_at' => function () {
+                return date('d-m-Y H:i:s', $this->updated_at);
+            }
         ];
     }
     public function getStatusLabel()
