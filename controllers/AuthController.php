@@ -7,11 +7,25 @@ use app\models\User;
 use Yii;
 use yii\rest\Controller;
 use yii\web\MethodNotAllowedHttpException;
+use yii\filters\Cors;
 
 class AuthController extends Controller
 {
     public $defaultAction = 'signup';
+/**
+     * @return array|array[]
+     */
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
 
+        $behaviors['corsFilter'] = [
+            'class' => Cors::class,
+
+        ];
+
+        return $behaviors;
+    }
     /**
      * @throws MethodNotAllowedHttpException
      */
