@@ -58,6 +58,7 @@ $config = [
                 [
                     'class' => UrlRule::class,
                     'controller' => [
+                        'store',
                         'worker',
                         'auth',
                         'category',
