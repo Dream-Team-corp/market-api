@@ -176,13 +176,25 @@ class User extends ActiveRecord implements IdentityInterface
             'username',
             'phone_number',
             'address',
-            'status',
-            'user_role',
+            'status' => function () {
+                return $this->statusLabel;
+            },
+            'user_role' => function () {
+                return $this->user_role === self::ROLE_ADMIN ? "admin" : "worker";
+            },
             'created_at',
             'updated_at'
         ];
     }
-
+    public function getStatusLabel()
+    {
+        if ($this->status === self::STATUS_ACTIVE) {
+            return "active";
+        } else if ($this->status === self::STATUS_DELETED) {
+            return "deleted";
+        }
+        return "inactive";
+    }
     public function saved()
     {
         $login = new LoginForm();
