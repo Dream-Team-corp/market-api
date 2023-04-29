@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "store_info".
@@ -20,9 +21,19 @@ class StoreInfo extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'store_info';
+    }
+
+    public function behaviors(): array
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'updatedAtAttribute' => false,
+            ]
+        ];
     }
 
     /**
@@ -31,8 +42,8 @@ class StoreInfo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['store_id', 'created_at'], 'integer'],
-            [['location', 'store_type', 'created_at'], 'required'],
+            [['store_id'], 'integer'],
+            [['location', 'store_type'], 'required'],
             [['location', 'store_type'], 'string', 'max' => 255],
             [['store_id'], 'exist', 'skipOnError' => true, 'targetClass' => Store::class, 'targetAttribute' => ['store_id' => 'id']],
         ];
@@ -51,6 +62,14 @@ class StoreInfo extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
         ];
     }
+
+    public function fields()
+    {
+        return  [
+            'location',
+            'store_type',
+        ];
+}
 
     /**
      * Gets query for [[Store]].

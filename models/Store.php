@@ -14,7 +14,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int $user_id
  * @property string $created_at
  *
- * @property StoreInfo[] $storeInfos
+ * @property StoreInfo $storeInfo
  * @property User $user
  */
 class Store extends \yii\db\ActiveRecord
@@ -31,11 +31,11 @@ class Store extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-          [
-              'class' => BlameableBehavior::class,
-              'createdByAttribute' => 'user_id',
-              'updatedByAttribute' => false
-          ],
+            [
+                'class' => BlameableBehavior::class,
+                'createdByAttribute' => 'user_id',
+                'updatedByAttribute' => false
+            ],
             [
                 'class' => TimestampBehavior::class,
                 'updatedAtAttribute' => false
@@ -60,7 +60,7 @@ class Store extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -70,14 +70,24 @@ class Store extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * Gets query for [[StoreInfos]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
+    public function fields(): array
+    {
+        return [
+            'id',
+            'store_name',
+            'store_info' => function () {
+                return $this->getStoreInfos();
+            },
+            'created_at' => function () {
+                return date('d-m-Y H:i:s', $this->created_at);
+            },
+        ];
+    }
+
+
     public function getStoreInfos()
     {
-        return $this->hasMany(StoreInfo::class, ['store_id' => 'id']);
+        return StoreInfo::find()->where(['store_id' => $this->id])->orderBy(['id' => SORT_DESC])->one();
     }
 
     /**
@@ -85,8 +95,22 @@ class Store extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
+    public function getUser(): \yii\db\ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function saved(array $data)
+    {
+        $store = new $this;
+        $store_info = new StoreInfo();
+        $store->store_name = $data['store_name'];
+        if ($store->save()) {
+            $store_info->store_id = $store->id;
+            $store_info->store_type = $data['store_type'];
+            $store_info->location = Yii::$app->user->identity->address;
+            return $store_info->save() ? true : $store_info->errors;
+        }
+        return $store->errors;
     }
 }
