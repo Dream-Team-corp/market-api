@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "store".
@@ -25,13 +27,29 @@ class Store extends \yii\db\ActiveRecord
         return 'store';
     }
 
+
+    public function behaviors()
+    {
+        return [
+          [
+              'class' => BlameableBehavior::class,
+              'createdByAttribute' => 'user_id',
+              'updatedByAttribute' => false
+          ],
+            [
+                'class' => TimestampBehavior::class,
+                'updatedAtAttribute' => false
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['user_id', 'created_at'], 'required'],
+            [['store_name'], 'required'],
             [['user_id'], 'integer'],
             [['created_at'], 'safe'],
             [['store_name'], 'string', 'max' => 255],

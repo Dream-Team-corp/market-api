@@ -16,7 +16,7 @@ class m230425_104700_create_store_table extends Migration
             'id' => $this->primaryKey(),
             'store_name' => $this->string(),
             'user_id' => $this->integer()->notNull(),
-            'created_at' => $this->dateTime()->notNull(),
+            'created_at' => $this->integer()->notNull(),
         ]);
  
         // create index for user_id column 
